@@ -11,7 +11,7 @@ const int servo_pin = 3;
 const int Max_car = 4;
 
 int now_car = 4;
-int car_in = 0,car_out = 0;
+int car_in = 0,car_out = 0,delay_cnt1 = 0,delay_cnt2 = 0;
 
 void setup() {
   //初始化LCD
@@ -33,24 +33,30 @@ void loop() {
       if(car_out == 1){
         parking_lever.write(180);
         car_out = 0;
+        delay_cnt1 = 1;
       }else{
         //車進開門
-        if(now_car != 0){ 
-          parking_lever.write(90);
-          if(car_in == 0)now_car--,car_in = 1;
-          delay(200);
+        if(now_car != 0){
+          if(delay_cnt1 == 0){ 
+            parking_lever.write(90);
+            if(car_in == 0)now_car--,car_in = 1;
+          }
         }else{
-          lcd.setCursor(0,0);   
-          lcd.print("not free spaces"); 
-          lcd.setCursor(0,1);   
-          lcd.print("Sorry ^3^"); 
-          delay(1000);
-          lcd.clear();
+          if(car_in == 0){
+            lcd.setCursor(0,0);   
+            lcd.print("Parking is full"); 
+            lcd.setCursor(0,1);   
+            lcd.print("Sorry ^3^"); 
+            delay(1000);
+            lcd.clear();
+          }
         }
       }
-      delay(200);
+      delay(400);
 
       
+    }else{
+      if(delay_cnt1 == 1)delay_cnt1 = 0;
     }
     
     if(digitalRead(IR2) == LOW){
@@ -58,25 +64,33 @@ void loop() {
       if(car_in == 1){
         parking_lever.write(180);
         car_in = 0;
+        delay_cnt2 = 1;
       }else{
       //車出開門
-        if(now_car < 4){ 
-          parking_lever.write(90);
-          if(car_out == 0)now_car++,car_out = 1;
+        if(now_car < 4){
+          if(delay_cnt2 == 0){ 
+            parking_lever.write(90);
+            if(car_out == 0)now_car++,car_out = 1;
+          }
         }else{
-          lcd.setCursor(0,0);   
-          lcd.print("error operate"); 
-          lcd.setCursor(0,1);   
-          lcd.print("place try again ^3^"); 
-          delay(1000);
-          lcd.clear();
+          if(car_out == 0){
+            lcd.setCursor(0,0);   
+            lcd.print("error operate"); 
+            lcd.setCursor(0,1);   
+            lcd.print("place try again ^3^"); 
+            delay(1000);
+            lcd.clear();
+          }
         }
       }
-      delay(200);
+      delay(400);
+    }else{
+      if(delay_cnt2 == 1)delay_cnt2 = 0;
     }
     
     lcd.setCursor(0,0);   
-    lcd.print("Welcome"); 
+    lcd.print("Welcome!!"); 
     lcd.setCursor(0,1);   
     lcd.print(now_car);
+
 }
