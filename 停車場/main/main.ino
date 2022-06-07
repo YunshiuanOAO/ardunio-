@@ -29,11 +29,12 @@ void setup() {
 void loop() {
     
     if(digitalRead(IR1) == LOW){
-      //車進開門
+      //車出關門
       if(car_out == 1){
         parking_lever.write(180);
         car_out = 0;
       }else{
+        //車進開門
         if(now_car != 0){ 
           parking_lever.write(90);
           if(car_in == 0)now_car--,car_in = 1;
